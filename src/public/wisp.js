@@ -416,6 +416,114 @@ async function parsewispconfig(configSource = globalThis.wispconfig) {
   }
 }
 
+function settokenincookies(token) {
+  document.cookie = `token=${encodeURIComponent(token)}; path=/`;
+}
+
+function cleartokenfromcookies() {
+  document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+}
+
+function fetchtokenfromcookies() {
+  const token = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("token="))
+    ?.split("=")[1];
+
+  return token ? decodeURIComponent(token) : null;
+}
+
+function getwisperrormessage(data, fallbackMessage) {
+  if (data && typeof data.message === "string" && data.message.trim()) {
+    return data.message;
+  }
+
+  if (data && typeof data.error === "string" && data.error.trim()) {
+    return data.error;
+  }
+
+  return fallbackMessage;
+}
+
+async function parsejsonresponse(response) {
+  const responseText = await response.text();
+
+  if (!responseText) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(responseText);
+  } catch (error) {
+    console.error("Failed to parse response JSON:", error);
+    return null;
+  }
+}
+
+function handlebackenderror(message, { fallbackMessage, silent = false } = {}) {
+  let resolvedMessage = message || fallbackMessage || "Unexpected error";
+
+  switch (message) {
+    case "Missing origin header":
+      resolvedMessage = "Missing origin header. This frontend request is not sending a valid origin.";
+      break;
+    case "Unknown or unauthorized origin":
+      resolvedMessage = "Unknown or unauthorized origin. This site is not allowed to use the configured Wisp backend.";
+      break;
+    case "Missing Bearer token":
+      cleartokenfromcookies();
+      resolvedMessage = "Missing Bearer token. Please log in again.";
+      break;
+    case "Token has expired":
+      cleartokenfromcookies();
+      resolvedMessage = "Token has expired. Please log in again.";
+      break;
+    case "Invalid token":
+      cleartokenfromcookies();
+      resolvedMessage = "Invalid token. Please log in again.";
+      break;
+    case "Token client does not match request":
+      cleartokenfromcookies();
+      resolvedMessage = "Token client does not match request. Please log in from the correct client app.";
+      break;
+    case "Token is not active":
+      cleartokenfromcookies();
+      resolvedMessage = "Token is not active. Please log in again.";
+      break;
+    case "Missing jwt_key in environment":
+      resolvedMessage = "Missing jwt_key in environment. The backend is not configured correctly.";
+      break;
+    case "Invalid JSON":
+      resolvedMessage = "Invalid JSON. The request payload could not be processed.";
+      break;
+    case "User already exists":
+      resolvedMessage = "User already exists. Try logging in instead.";
+      break;
+    case "Username and password are required":
+      resolvedMessage = "Username and password are required.";
+      break;
+    case "Invalid username or password":
+      resolvedMessage = "Invalid username or password.";
+      break;
+    default:
+      break;
+  }
+
+  if (!silent) {
+    alert(resolvedMessage);
+  }
+
+  return resolvedMessage;
+}
+
+async function wisprequest(path, options = {}, { fallbackMessage } = {}) {
+  const response = await fetch(`${wispapiurl}${path}`, options);
+  const data = await parsejsonresponse(response);
+  const message = getwisperrormessage(data, fallbackMessage);
+
+  return { response, data, message };
+}
+
 async function wispcreateaccount() {
   if (!loginpage) {
     await (wispConfigPromise ?? parsewispconfig());
@@ -437,7 +545,7 @@ async function wispcreateaccount() {
   }
 
 try {
-    const response = await fetch(`${wispapiurl}/api/createaccount`, {
+    const { response, data, message } = await wisprequest("/api/createaccount", {
       method: "POST",
       headers: { 
         "Content-Type": "application/json",
@@ -445,28 +553,32 @@ try {
         "origin": origin  
       },
       body: JSON.stringify({ "username": username, "email": email, "password": password }),
+    }, {
+      fallbackMessage: "Failed to create account.",
     });
 
-    const data = await response.json(); 
-
     if (!response.ok) {
-      const errorData = await data;
-      alert(`Error: ${errorData.message || 'Failed to create account.'}`);
+      handlebackenderror(message, { fallbackMessage: "Failed to create account." });
       return null;
-    } else {
-      if (!loginpage) {
-        alert("Error: Missing login page in wisp config.");
-        return null;
-      }
-
-      const token = data.token;
-      //window.location.replace(`${loginpage}?token=${token}`);
-      document.cookie = `token=${token}; path=/`;
-      console.log("Token saved:", token);
-      window.location.replace(`${loginpage}?token=${token}`);
-      return token;
     }
+
+    if (!loginpage) {
+      alert("Error: Missing login page in wisp config.");
+      return null;
+    }
+
+    if (!data?.token) {
+      alert("Account created, but no token was returned by the backend.");
+      return null;
+    }
+
+    const token = data.token;
+    settokenincookies(token);
+    console.log("Token saved:", token);
+    window.location.replace(`${loginpage}?token=${token}`);
+    return token;
 } catch (error) {
+  console.error("Create account failed:", error);
   alert(`Network error: ${error.message}`);
   return null; 
 }
@@ -486,54 +598,125 @@ async function wisplogin() {
     return;
   }
 try {
-    const result = await fetch(`${wispapiurl}/api/login`, {
+    const { response, data, message } = await wisprequest("/api/login", {
       method: "POST",
       headers: {
       "Content-Type": "application/json",
       "origin": origin
       },
       body: JSON.stringify({ username, password })
+    }, {
+      fallbackMessage: "Login failed.",
     });
-
-    const data = await result.json();
     
-    if (result.ok && data.token) {
-      document.cookie = `token=${data.token}; path=/`;
-      console.log("Token saved:", data.token);
-    } else {
-      alert("Login failed: " + (data.message || "Invalid credentials"));
+    if (!response.ok) {
+      handlebackenderror(message, { fallbackMessage: "Login failed." });
+      return null;
     }
+
+    if (!data?.token) {
+      alert("Login succeeded, but no token was returned by the backend.");
+      return null;
+    }
+
+    settokenincookies(data.token);
+    console.log("Token saved:", data.token);
+    return data.token;
   } catch (error) {
     console.error("Login failed:", error);
-    alert("An error occurred during login. Please check the console for details.");
+    alert(`Network error: ${error.message}`);
+    return null;
   }
 }
 
-function fetchtokenfromcookies() {
-  const token = document.cookie
-    .split('; ')
-    .find(row => row.startsWith('token='))
-    ?.split('=')[1];
-    let tk = token || null;
-  return tk
-}
+async function verifytokenvalidation({ silent = true } = {}) {
+  if (!wispapiurl) {
+    await (wispConfigPromise ?? parsewispconfig());
+  }
 
-const gettoken = fetchtokenfromcookies()
+  const token = fetchtokenfromcookies();
 
-async function verifytokenvalidation() {
+  if (!token) {
+    handlebackenderror("Missing Bearer token", {
+      fallbackMessage: "Missing Bearer token",
+      silent,
+    });
+    return false;
+  }
+
   try {
-    const res = await fetch(`${wispapiurl}/api/verify-token`, {
+    const { response, data, message } = await wisprequest("/api/verify-token", {
       method: "GET",
       headers: {
-        "Authorization": `Bearer ${gettoken}`,
+        "Authorization": `Bearer ${token}`,
         "origin": origin
       }
+    }, {
+      fallbackMessage: "Unable to verify token.",
     });
 
-    const data = await res.json();
+    if (!response.ok) {
+      handlebackenderror(message, { fallbackMessage: "Unable to verify token.", silent });
+      return false;
+    }
 
-    return data.valid === true; // or just res.ok if that's your API
+    return data?.valid === true;
   } catch (err) {
+    if (!silent) {
+      alert(`Network error: ${err.message}`);
+    }
+    console.error("Token verification failed:", err);
+    return false;
+  }
+}
+
+async function wisplogout({ silent = false, redirectToLogin = false } = {}) {
+  if (!wispapiurl) {
+    await (wispConfigPromise ?? parsewispconfig());
+  }
+
+  const token = fetchtokenfromcookies();
+
+  if (!token) {
+    handlebackenderror("Missing Bearer token", {
+      fallbackMessage: "Missing Bearer token",
+      silent,
+    });
+    return false;
+  }
+
+  try {
+    const { response, data, message } = await wisprequest("/api/logout", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "origin": origin
+      }
+    }, {
+      fallbackMessage: "Logout failed.",
+    });
+
+    if (!response.ok) {
+      handlebackenderror(message, { fallbackMessage: "Logout failed.", silent });
+      return false;
+    }
+
+    cleartokenfromcookies();
+
+    if (!silent && data?.message) {
+      alert(data.message);
+    }
+
+    if (redirectToLogin && loginpage) {
+      window.location.replace(loginpage);
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Logout failed:", error);
+    if (!silent) {
+      alert(`Network error: ${error.message}`);
+    }
     return false;
   }
 }
