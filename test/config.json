@@ -1,0 +1,5 @@
+{
+    "loginpage": "http://127.0.0.1:5500/test/login.html",
+    "createaccountpage": "http://127.0.0.1:5500/test/index.html",
+    "wispapiurl": "http://localhost:5000"
+}

@@ -7,7 +7,8 @@
       name="description"
       content="Starter HTML boilerplate for your project."
     />
-    <title>My App</title>
+     <link rel="script" href="http://localhost:5001/createaccount"> 
+    <title>create account</title>
     <style>
       :root {
         font-family: Arial, sans-serif;
@@ -41,25 +42,16 @@
     </style>
   </head>
   <body>
-    <main>
-      <h1>Hello, There!</h1>
-        <p id="count">This page has been visited 0 times.</p>
-    </main>
 
-    <script>
-        async function fetchcount() {
-            try {
-                const count = fetch("http://localhost:3000/addcount") 
-                    .then((response) => response.json())
-                    .then((data) => {
-                        document.getElementById("count").textContent = `This page has been visited ${data.count} times.`;
-                    });
-            } catch (error) {
-                console.error("Error fetching count:", error);
-            }
-        }
+<script src="http://localhost:5001/v1"></script>
+<script>
+    initialisewisp("config.json", "createaccount");
 
-        fetchcount();
-    </script>
+    function createaccount() {
+        const result = wispcreateaccount();
+        console.log(result);
+    }
+
+</script>
   </body>
 </html>

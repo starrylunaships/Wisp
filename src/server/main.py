@@ -28,18 +28,21 @@ with open(URL_MAP_PATH, encoding="utf-8") as f:
 
 
 def validate_client_request():
-    company_id = request.headers.get("company-id")
     origin = request.headers.get("origin")
-    allowed = URL_MAP.get(company_id)
 
-    if not allowed:
-        return None, jsonify({"message": "Unknown company"}), 403
+    if not origin:
+        return None, jsonify({"message": "Missing origin header"}), 403
 
-    if origin != allowed:
-        return None, jsonify({"message": "Invalid origin"}), 403
+    # Find the company whose allowed origin matches the request origin
+    company_id = next(
+        (corp for corp, allowed_origin in URL_MAP.items() if allowed_origin == origin),
+        None
+    )
+
+    if not company_id:
+        return None, jsonify({"message": "Unknown or unauthorized origin"}), 403
 
     return company_id, None, None
-
 
 def build_token(username, email, client_id):
     if not JWT_SECRET:

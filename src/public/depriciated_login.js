@@ -1,18 +1,14 @@
 let loginpage;
 let createaccountpage;
+let wispapiurl;
 let wispConfigPromise = null;
-const apiBaseUrl = "http://localhost:5000";
-const companyId = "test-corp";
-
-function emitWispAuthEvent(name, detail) {
-  document.dispatchEvent(new CustomEvent(name, { detail }));
-}
 
 function initialisewisp(configSource) {
-  if (!document.getElementById("wisp-login-styles")) {
+  if (!document.getElementById("wisp-createacc-styles")) {
     document.head.insertAdjacentHTML(
       "beforeend",
-      `<style id="wisp-login-styles">
+      `
+<style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=DM+Mono:wght@500&display=swap');
 
   .login-wrap {
@@ -26,9 +22,9 @@ function initialisewisp(configSource) {
   }
 
   .login-card {
-    background: var(--color-background-primary, #ffffff);
-    border: 0.5px solid var(--color-border-tertiary, #dddddd);
-    border-radius: var(--border-radius-lg, 18px);
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
     padding: 2rem 2.25rem 1.75rem;
     width: 100%;
     max-width: 360px;
@@ -44,7 +40,7 @@ function initialisewisp(configSource) {
   .login-logo-icon {
     width: 28px;
     height: 28px;
-    background: #111111;
+    background: #111;
     border-radius: 7px;
     display: flex;
     align-items: center;
@@ -57,20 +53,20 @@ function initialisewisp(configSource) {
     font-family: 'DM Mono', monospace;
     font-size: 15px;
     font-weight: 500;
-    color: var(--color-text-primary, #111111);
+    color: var(--color-text-primary);
     letter-spacing: -0.02em;
   }
 
   .login-heading {
     font-size: 18px;
     font-weight: 500;
-    color: var(--color-text-primary, #111111);
+    color: var(--color-text-primary);
     margin: 0 0 0.3rem;
   }
 
   .login-sub {
     font-size: 13px;
-    color: var(--color-text-secondary, #666666);
+    color: var(--color-text-secondary);
     margin: 0 0 1.5rem;
   }
 
@@ -78,7 +74,7 @@ function initialisewisp(configSource) {
     display: block;
     font-size: 12px;
     font-weight: 500;
-    color: var(--color-text-secondary, #666666);
+    color: var(--color-text-secondary);
     margin-bottom: 5px;
     letter-spacing: 0.03em;
     text-transform: uppercase;
@@ -98,10 +94,10 @@ function initialisewisp(configSource) {
     width: 100%;
     padding: 9px 0;
     margin-top: 0.5rem;
-    background: var(--color-text-primary, #111111);
-    color: var(--color-background-primary, #ffffff);
+    background: var(--color-text-primary);
+    color: var(--color-background-primary);
     border: none;
-    border-radius: var(--border-radius-md, 12px);
+    border-radius: var(--border-radius-md);
     font-size: 14px;
     font-weight: 500;
     font-family: 'DM Sans', sans-serif;
@@ -116,33 +112,23 @@ function initialisewisp(configSource) {
     margin-top: 1.5rem;
     text-align: center;
     font-size: 11px;
-    color: var(--color-text-tertiary, #888888);
+    color: var(--color-text-tertiary);
     letter-spacing: 0.01em;
   }
 
-  .login-footer span,
-  .login-footer a {
+  .login-footer span {
     font-weight: 500;
-    color: var(--color-text-secondary, #666666);
+    color: var(--color-text-secondary);
   }
+</style>
 
-  .login-footer a {
-    text-decoration: none;
-  }
-  </style>`
-    );
-  }
-
-  if (!document.getElementById("wisp-login-root")) {
-    document.body.insertAdjacentHTML(
-      "beforeend",
-      `<div class="login-wrap" id="wisp-login-root">
+<div class="login-wrap">
   <div class="login-card">
     <div class="login-logo">
       <div class="login-logo-icon">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
           <circle cx="8" cy="8" r="4" fill="white" opacity="0.9"/>
-          <circle cx="8" cy="8" r="2" fill="#111111"/>
+          <circle cx="8" cy="8" r="2" fill="#111"/>
         </svg>
       </div>
       <span class="login-logo-name">wisp</span>
@@ -158,47 +144,29 @@ function initialisewisp(configSource) {
 
     <div class="login-field">
       <label class="login-label" for="password">Password</label>
-      <input type="password" id="password" placeholder="password" />
+      <input type="password" id="password" placeholder="••••••••" />
     </div>
 
-    <button type="button" class="login-btn" id="login-submit">Sign in</button>
+    <button class="login-btn" onclick="login()">Sign in</button>
 
-    <div class="login-footer" id="login-footer">
+    <div class="login-footer">
       Powered by <span>wisp</span>
     </div>
   </div>
-</div>`
-    );
-  }
-
-  const loginButton = document.getElementById("login-submit");
-  if (loginButton && !loginButton.dataset.bound) {
-    loginButton.addEventListener("click", async (event) => {
-      event.preventDefault();
-      await wisplogin();
-    });
-    loginButton.dataset.bound = "true";
-  }
-
-  wispConfigPromise = parsewispconfig(configSource).then((cfg) => {
-    renderFooterLink();
-    tokenlogin();
-    return cfg;
-  });
-
-  return wispConfigPromise;
+</div>
+`
+  );
+}
 }
 
-function renderFooterLink() {
-  const footer = document.getElementById("login-footer");
-
-  if (!footer || !createaccountpage) {
-    return;
-  }
-
-  footer.innerHTML = `Need an account? <a href="${createaccountpage}">Create one</a>`;
+function getcurrentur() {
+  let currentURL = window.location.origin;
+  return currentURL;
 }
 
+origin = getcurrentur();
+
+// do config parsing
 async function parsewispconfig(configSource = globalThis.wispconfig) {
   try {
     if (!configSource) {
@@ -229,6 +197,7 @@ async function parsewispconfig(configSource = globalThis.wispconfig) {
 
     loginpage = cfg.loginpage;
     createaccountpage = cfg.createaccountpage;
+    wispapiurl = cfg.wispapiurl;
 
     return cfg;
   } catch (error) {
@@ -238,90 +207,31 @@ async function parsewispconfig(configSource = globalThis.wispconfig) {
   }
 }
 
-function getRequestOrigin() {
-  return window.location.origin;
-}
-
 async function wisplogin() {
   if (!loginpage) {
     await (wispConfigPromise ?? parsewispconfig());
   }
 
-  const username = document.getElementById("username")?.value.trim();
-  const password = document.getElementById("password")?.value;
+
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
 
   if (!username || !password) {
-    alert("Please enter both username and password.");
-    return null;
+    alert("Please enter both username and password");
+    return;
   }
-
-  try {
-    const response = await fetch(`${apiBaseUrl}/api/login`, {
+try {
+    const result = await fetch(`${wispapiurl}/api/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "company-id": companyId,
-        "origin": getRequestOrigin()
+        "company-id": "test-corp",
+        "origin": origin
       },
-      body: JSON.stringify({
-        username,
-        password
-      })
+      body: JSON.stringify({ username, password })
     });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      alert(`Error: ${data.message || "Failed to sign in."}`);
-      return null;
-    }
-
-    if (!data.token) {
-      alert("Error: Server did not return a token.");
-      return null;
-    }
-
-    localStorage.setItem("wispToken", data.token);
-    emitWispAuthEvent("wisp:login-success", { token: data.token, response: data });
-    alert("Login successful.");
-    return data.token;
   } catch (error) {
-    alert(`Network error: ${error.message}`);
-    return null;
-  }
-}
-
-async function tokenlogin() {
-  try {
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get("token");
-
-    if (!token) {
-      return null;
-    }
-
-    const response = await fetch(`${apiBaseUrl}/api/verify-token`, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "company-id": companyId,
-        "origin": getRequestOrigin()
-      }
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || "Invalid token");
-    }
-
-    localStorage.setItem("wispToken", token);
-    window.history.replaceState({}, "", window.location.pathname);
-    emitWispAuthEvent("wisp:token-verified", { token, response: data });
-    return data;
-  } catch (error) {
-    console.error("Token verification failed:", error);
-    alert("Token invalid or expired");
-    return null;
+    console.error("Login failed:", error);
+    alert("An error occurred during login. Please check the console for details.");
   }
 }
