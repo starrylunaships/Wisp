@@ -32,7 +32,7 @@ These are checked for protected routes:
 | 401 | `Invalid token` | The JWT is malformed, signed with the wrong secret, or otherwise fails JWT validation. |
 | 401 | `Token client does not match request` | The JWT `client_id` does not match the company resolved from the request origin. |
 | 401 | `Token is not active` | The token is missing from the database, was replaced by a newer login, or was cleared on logout. |
-| 500 | `Missing jwt_key in environment` | The backend is missing `jwt_key` in `.env`, so token encode/decode cannot run. |
+
 
 ## Endpoint-specific errors
 

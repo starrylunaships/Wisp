@@ -508,3 +508,37 @@ try {
     alert("An error occurred during login. Please check the console for details.");
   }
 }
+
+function fetchtokenfromcookies() {
+  const token = document.cookie
+    .split('; ')
+    .find(row => row.startsWith('token='))
+    ?.split('=')[1];
+    let tk = token || null;
+  return tk
+}
+
+const gettoken = fetchtokenfromcookies()
+
+async function verifytokenvalidation() {
+  try {
+    const res = await fetch(`${wispapiurl}/api/verify-token`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${gettoken}`,
+        "origin": origin
+      }
+    });
+
+    const data = await res.json();
+
+    return data.valid === true; // or just res.ok if that's your API
+  } catch (err) {
+    return false;
+  }
+}
+
+async function keyvalidationcheck() {
+  const tokenIsValid = await verifytokenvalidation();
+  return tokenIsValid;
+}
