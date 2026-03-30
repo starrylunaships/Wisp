@@ -376,6 +376,8 @@ function getcurrenturl() {
 
 origin = getcurrenturl();
 
+let redirectpage
+
 async function parsewispconfig(configSource = globalThis.wispconfig) {
   try {
     if (!configSource) {
@@ -406,6 +408,7 @@ async function parsewispconfig(configSource = globalThis.wispconfig) {
 
     loginpage = cfg.loginpage;
     createaccountpage = cfg.createaccountpage;
+    redirectpage = cfg.redirectpage
     wispapiurl = cfg.wispapiurl;
 
     return cfg;
@@ -611,21 +614,26 @@ try {
     
     if (!response.ok) {
       handlebackenderror(message, { fallbackMessage: "Login failed." });
-      return null;
+      return "error";
     }
 
     if (!data?.token) {
       alert("Login succeeded, but no token was returned by the backend.");
-      return null;
+      return "error";
     }
 
     settokenincookies(data.token);
     console.log("Token saved:", data.token);
-    return data.token;
+    if (redirectpage) {
+      window.location.href = redirectpage;
+    } else {
+      console.warn("No redirect page configured");
+    }
+    //return data.token;
   } catch (error) {
     console.error("Login failed:", error);
     alert(`Network error: ${error.message}`);
-    return null;
+    return "error";
   }
 }
 
@@ -685,3 +693,9 @@ async function keyvalidationcheck() {
   return tokenIsValid;
 }
 
+const token = fetchtoken();
+
+if (token) {
+  alert("You’re already logged in. Go touch the dashboard.");
+  window.location.href = redirectpage || "dash.html";
+}

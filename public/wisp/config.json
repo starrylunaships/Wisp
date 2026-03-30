@@ -1,5 +1,6 @@
 {
     "loginpage": "http://127.0.0.1:5501/public/dash/login.html",
     "createaccountpage": "http://127.0.0.1:5501/public/dash/createaccount.html",
-    "wispapiurl": "http://localhost:5000"
+    "wispapiurl": "http://localhost:5000",
+    "redirectpage" : "http://127.0.0.1:5501/public/dash/dash.html"
 }

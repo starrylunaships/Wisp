@@ -17,11 +17,10 @@
 <script>
     initialisewisp("../wisp/config.json", "createaccount");
 
-    function createaccount() {
-        const result = wispcreateaccount();
-        console.log(result);
-        window.location.href = "dash.html";
-    }
+async function createaccount() {
+    const result = await wispcreateaccount();
+    console.log(result);
+}
 
 
 </script>

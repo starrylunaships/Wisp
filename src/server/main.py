@@ -309,5 +309,20 @@ def logout():
     clear_user_token(g.jwt_payload.get("email"), g.company_id)
     return jsonify({"message": "Logged out"})
 
+@app.route('/api/get-company', methods=['GET'])
+def get_company():
+    company_id, error_response, status_code = validate_client_request()
+    if error_response:
+        return error_response, status_code
+    
+    return jsonify({"company_id": company_id})
+    
+@app.route('/api/get-username', methods=['GET'])
+@jwt_required
+def get_username():
+    return jsonify({"username": g.jwt_payload.get("user_id")})
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)

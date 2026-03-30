@@ -17,13 +17,10 @@
 <script>
     initialisewisp("../wisp/config.json", "login");
 
-    function login() {
-        const result = wisplogin();
-        console.log(result);
-        window.location.href = "dash.html";
-    }
-
-
+async function login() {
+    const result = await wisplogin();
+    console.log(result);
+}
 </script>
 
 </html>
