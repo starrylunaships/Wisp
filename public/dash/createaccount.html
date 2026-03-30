@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #000;
+      color: white;
+      overflow-x: hidden;
+    }
+
+
+</style>
+
+<body></body>
+
+<script src="http://localhost:5001/v1"></script>
+<script>
+    initialisewisp("../wisp/config.json", "createaccount");
+
+    function createaccount() {
+        const result = wispcreateaccount();
+        console.log(result);
+        window.location.href = "dash.html";
+    }
+
+
+</script>
+
+</html>

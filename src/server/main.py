@@ -8,7 +8,7 @@ import sqlite3
 from flask_cors import CORS
 import jwt
 from dotenv import load_dotenv
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 BASE_DIR = Path(__file__).resolve().parent
 ENV_PATH = BASE_DIR / ".env"
@@ -48,7 +48,7 @@ def build_token(username, email, client_id):
     if not JWT_SECRET:
         return None, jsonify({"message": "Missing jwt_key in environment"}), 500
 
-    issued_at = datetime.utcnow()
+    issued_at = datetime.now(timezone.utc).replace(tzinfo=None)
     payload = {
         "user_id": username,
         "email": email,
@@ -126,7 +126,7 @@ def jwt_required(route_handler):
 def init_db():
 
     #initialize the database connection
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=10.0)
     cursor = conn.cursor()
 
     #create the tables
@@ -155,7 +155,7 @@ init_db()
 
 
 def save_user_token(email, client_id, token):
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=10.0)
     cursor = conn.cursor()
 
     try:
@@ -170,7 +170,7 @@ def save_user_token(email, client_id, token):
 
 
 def get_saved_token(email, client_id):
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=10.0)
     cursor = conn.cursor()
 
     try:
@@ -214,7 +214,7 @@ def createaccount():
     #password hashing 
     password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
     
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=10.0)
     cursor = conn.cursor()
 
     try:
@@ -242,49 +242,53 @@ def createaccount():
 
 @app.route('/api/login', methods=['POST'])
 def login():
-    company_id, error_response, status_code = validate_client_request()
-    if error_response:
-        return error_response, status_code
-
-    data = request.get_json()
-    if data is None:
-        return jsonify({"error": "Invalid JSON"}), 400
-
-    username = data.get('username')
-    password = data.get('password')
-
-    if not username or not password:
-        return jsonify({"message": "Username and password are required"}), 400
-
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-
     try:
-        cursor.execute("""
-        SELECT username, email, password_hash
-        FROM users
-        WHERE username = ? AND client_id = ?
-        """, (username, company_id))
-        user = cursor.fetchone()
-    finally:
-        conn.close()
+        company_id, error_response, status_code = validate_client_request()
+        if error_response:
+            return error_response, status_code
 
-    if not user:
-        return jsonify({"message": "Invalid username or password"}), 401
+        data = request.get_json()
+        if data is None:
+            return jsonify({"error": "Invalid JSON"}), 400
 
-    stored_username, email, password_hash = user
+        username = data.get('username')
+        password = data.get('password')
 
-    if not bcrypt.checkpw(password.encode(), password_hash.encode()):
-        return jsonify({"message": "Invalid username or password"}), 401
+        if not username or not password:
+            return jsonify({"message": "Username and password are required"}), 400
 
-    token, error_response, status_code = build_token(stored_username, email, company_id)
-    if error_response:
-        return error_response, status_code
+        conn = sqlite3.connect(DB_PATH, timeout=10.0)
+        cursor = conn.cursor()
 
-    save_user_token(email, company_id, token)
+        try:
+            cursor.execute("""
+            SELECT username, email, password_hash
+            FROM users
+            WHERE username = ? AND client_id = ?
+            """, (username, company_id))
+            user = cursor.fetchone()
+        finally:
+            conn.close()
 
-    return jsonify({"token": token})
+        if not user:
+            return jsonify({"message": "Invalid username or password"}), 401
 
+        stored_username, email, password_hash = user
+
+        if not bcrypt.checkpw(password.encode(), password_hash.encode()):
+            return jsonify({"message": "Invalid username or password"}), 401
+
+        token, error_response, status_code = build_token(stored_username, email, company_id)
+        if error_response:
+            return error_response, status_code
+
+        save_user_token(email, company_id, token)
+
+        return jsonify({"token": token})
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"error": str(e)}, 500 
 
 
 @app.route('/api/verify-token', methods=['GET'])

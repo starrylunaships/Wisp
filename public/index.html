@@ -186,35 +186,6 @@
 
 <body>
 
-  <!-- Announcement bar -->
-  <div class="announcement-bar">
-    <div class="announcement-track">
-      <div class="announcement-text">
-        <span>COMING SOON</span>
-        <span>COMING SOON</span>
-        <span>COMING SOON</span>
-        <span>COMING SOON</span>
-        <span>COMING SOON</span>
-        <span>COMING SOON</span>
-        <span>COMING SOON</span>
-        <span>COMING SOON</span>
-        <span>COMING SOON</span>
-        <span>COMING SOON</span>
-      </div>
-      <div class="announcement-text" aria-hidden="true">
-        <span>COMING SOON</span>
-        <span>COMING SOON</span>
-        <span>COMING SOON</span>
-        <span>COMING SOON</span>
-        <span>COMING SOON</span>
-        <span>COMING SOON</span>
-        <span>COMING SOON</span>
-        <span>COMING SOON</span>
-        <span>COMING SOON</span>
-        <span>COMING SOON</span>
-      </div>
-    </div>
-  </div>
 
   <!-- Hero — contains only hero elements -->
   <div class="hero">
@@ -241,7 +212,7 @@
 
     <h1 style="font-weight: 300; letter-spacing: 2px;">Wisp</h1>
     <p>Auth that doesn't attack</p>
-    <button class="btn">Coming Soon</button>
+    <button class="btn" onclick="redirecttosignup()">Get Started</button>
   </div>
 
   <!-- Section — correctly OUTSIDE .hero -->
@@ -259,12 +230,7 @@
     <a class="bottom-link" href="https://github.com/SaaranshDx/Wisp/issues">Is something broken?</a>
 </div>
 
-  <script>
-    const bg = document.getElementById("bg");
-    window.addEventListener("scroll", () => {
-      bg.style.transform = `translateY(${window.scrollY * 0.4}px)`;
-    });
-  </script>
+  <script src="static/index.js"></script>
 
 </body>
 </html>

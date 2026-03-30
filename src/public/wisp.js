@@ -424,7 +424,7 @@ function cleartokenfromcookies() {
   document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
 }
 
-function fetchtokenfromcookies() {
+function fetchtoken() {
   const token = document.cookie
     .split("; ")
     .find((row) => row.startsWith("token="))
@@ -684,3 +684,4 @@ async function keyvalidationcheck() {
   const tokenIsValid = await verifytokenvalidation();
   return tokenIsValid;
 }
+
