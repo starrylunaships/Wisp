@@ -18,12 +18,12 @@
 <br/>
 
 > [!WARNING]  
-> Rightnow there is on-going work on the documentation and the skills
+> Documentation is still in progress. Things may change.
 
 
 ## Wisp
 
-Simple token-based auth with origin checks — simple, secure, no bloat.
+Simple token-based auth with origin checks — secure, fast, free.
 
 ## Getting Started
 
@@ -31,9 +31,9 @@ To get started you can read the Wisp [Documentation](https://wispproject.netlify
 
 ## AI
 
-We provide our own skills for you to use with you ai agents to impliment wisp within your projects
+We provide our own [skills](https://support.claude.com/en/articles/12512176-what-are-skills) for you to use with your agents to implement Wisp within your projects
 
-## Faq
+## FAQs
 
 ### What is Wisp?
 Wisp is a minimal authentication system with token-based auth and origin validation.  
@@ -58,8 +58,11 @@ If it doesn’t match → request is rejected.
 ---
 
 ### Do I need a database?
-No. wisp provides you your own database
+Wisp uses SQLite by default for storing users and tokens.
 
+Origin validation is handled separately using a simple JSON map.
+
+You can replace or extend this setup if needed.
 ---
 
 ### Can I use multiple origins?
