@@ -1,9 +1,9 @@
-## fetchtoken()
+## fetchToken()
 
-just add ths to the js code 
+Just add this to the JS code 
 
-```javascript
-function fetchtoken() {
+```js
+function fetchToken() {
   const token = document.cookie
     .split("; ")
     .find((row) => row.startsWith("token="))

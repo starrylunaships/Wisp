@@ -1,6 +1,6 @@
 # Wisp Docs
 
-Auth that doesn’t attack.
+Authentication that is secure and predictable.
 
 Wisp is a minimal authentication system built around:
 - token-based authentication
