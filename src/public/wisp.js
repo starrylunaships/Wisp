@@ -132,6 +132,14 @@ function initialisewisplogin(configSource) {
     font-weight: 500;
     color: var(--color-text-secondary);
   }
+  .input {
+  background: #111;
+  color: #e5e5e5;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 10px;
+  }
+
 </style>`
     );
   }
@@ -143,10 +151,16 @@ function initialisewisplogin(configSource) {
   <div class="login-card">
     <div class="login-logo">
       <div class="login-logo-icon">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <circle cx="8" cy="8" r="4" fill="white" opacity="0.9"/>
-          <circle cx="8" cy="8" r="2" fill="#111"/>
-        </svg>
+      <svg fill="#ffffff" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+           viewBox="0 0 477.959 477.959" xml:space="preserve">
+        <g><g>
+          <path d="M238.421,165.792c0,0,54.115-84.598,18.411-143.04C243.147,0.356,213.901-6.707,191.505,6.976c-16.049,9.805-24.223,27.601-22.533,45.14c-14.836-9.507-34.4-10.355-50.449-0.552c-22.396,13.683-29.459,42.93-15.777,65.327C138.452,175.333,238.421,165.792,238.421,165.792z"/>
+          <path d="M260.801,202.423c0,0-54.115,84.596-18.41,143.04c13.684,22.396,42.932,29.46,65.328,15.775c16.047-9.804,24.223-27.6,22.53-45.14c14.837,9.509,34.402,10.357,50.449,0.553c22.396-13.683,29.459-42.931,15.777-65.325C360.771,192.881,260.801,202.423,260.801,202.423z"/>
+          <path d="M426.744,126.001c-9.805-16.049-27.602-24.223-45.141-22.533c9.508-14.836,10.357-34.4,0.553-50.448c-13.684-22.396-42.93-29.46-65.326-15.778c-58.44,35.706-48.903,135.676-48.903,135.676s84.598,54.115,143.041,18.41C433.361,177.645,440.426,148.397,426.744,126.001z"/>
+          <path d="M117.62,264.748c-9.508,14.835-10.357,34.4-0.551,50.447c13.682,22.396,42.93,29.459,65.324,15.777c58.445-35.705,48.904-135.676,48.904-135.676s-84.596-54.115-143.041-18.408c-22.395,13.682-29.459,42.93-15.775,65.326C82.286,258.263,100.081,266.437,117.62,264.748z"/>
+          <path d="M216.699,316.855c-0.652,1.458-1.324,3.08-2.141,4.81c-0.85,1.716-1.701,3.586-2.77,5.514c-2.033,3.893-4.572,8.14-7.598,12.561c-3.018,4.425-6.537,9.018-10.539,13.598c-4,4.585-8.482,9.155-13.365,13.593c-4.879,4.438-10.156,8.74-15.711,12.836c-5.566,4.083-11.416,7.953-17.402,11.58c-11.975,7.257-24.551,13.476-36.604,18.621c-12.051,5.156-23.588,9.239-33.539,12.366c-9.957,3.128-18.332,5.291-24.117,6.646c-2.891,0.676-5.137,1.151-6.613,1.443c-0.709,0.131-1.254,0.232-1.619,0.299c-0.191,0.037-0.25,0.036-0.303,0.041c-0.051,0.003-0.15,0.024-0.137,0.021l14.199,47.176c0,0,0.287-0.111,0.842-0.329c0.475-0.201,1.182-0.5,2.104-0.888c1.773-0.77,4.283-1.895,7.404-3.366c6.24-2.947,14.922-7.3,25.004-13.005c10.078-5.706,21.563-12.766,33.34-21.082c11.775-8.303,23.848-17.866,35.027-28.396c5.592-5.263,10.967-10.746,15.982-16.385c5.006-5.648,9.652-11.443,13.828-17.263c4.18-5.82,7.881-11.665,11.053-17.375c3.176-5.705,5.814-11.273,7.957-16.503c2.145-5.229,3.809-10.114,5.027-14.499c0.66-2.174,1.123-4.257,1.604-6.149c0.449-1.906,0.777-3.676,1.113-5.255c0.561-3.192,0.969-5.687,1.154-7.404c0.215-1.707,0.328-2.617,0.328-2.617s-0.303,0.866-0.867,2.491C218.809,311.561,217.889,313.908,216.699,316.855z"/>
+        </g></g>
+      </svg>
       </div>
       <span class="login-logo-name">wisp</span>
     </div>
@@ -156,18 +170,20 @@ function initialisewisplogin(configSource) {
 
     <div class="login-field">
       <label class="login-label" for="username">Username</label>
-      <input type="text" id="username" placeholder="your_username" />
+      <input  class="input" type="text" id="username" placeholder="your_username" />
     </div>
 
     <div class="login-field">
       <label class="login-label" for="password">Password</label>
-      <input type="password" id="password" placeholder="••••••••" />
+      <input class="input" type="password" id="password" placeholder="********" />
     </div>
+
+    <a href="createaccount.html" style="font-size: 12px; color: var(--color-text-secondary); margin-bottom: 1.5rem; display: inline-block;">Don't have an account? Create one</a>
 
     <button type="button" class="login-btn" id="wisp-login-submit">Sign in</button>
 
     <div class="login-footer">
-      Powered by <a href="https://wisp.com" target="_blank"><span>wisp</span></a>
+      Powered by <a href="https://wispproject.netlify.app" target="_blank"><span>wisp</span></a>
     </div>
   </div>
 </div>
@@ -305,6 +321,13 @@ function initialisewispsignup(configSource) {
     font-weight: 500;
     color: var(--color-text-secondary);
   }
+  .input {
+  background: #111;
+  color: #e5e5e5;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 10px;
+  }
 </style>`
     );
   }
@@ -315,10 +338,16 @@ function initialisewispsignup(configSource) {
   <div class="createacc-card">
     <div class="createacc-logo">
       <div class="createacc-logo-icon">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <circle cx="8" cy="8" r="4" fill="white" opacity="0.9"/>
-          <circle cx="8" cy="8" r="2" fill="#111"/>
-        </svg>
+      <svg fill="#ffffff" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+           viewBox="0 0 477.959 477.959" xml:space="preserve">
+        <g><g>
+          <path d="M238.421,165.792c0,0,54.115-84.598,18.411-143.04C243.147,0.356,213.901-6.707,191.505,6.976c-16.049,9.805-24.223,27.601-22.533,45.14c-14.836-9.507-34.4-10.355-50.449-0.552c-22.396,13.683-29.459,42.93-15.777,65.327C138.452,175.333,238.421,165.792,238.421,165.792z"/>
+          <path d="M260.801,202.423c0,0-54.115,84.596-18.41,143.04c13.684,22.396,42.932,29.46,65.328,15.775c16.047-9.804,24.223-27.6,22.53-45.14c14.837,9.509,34.402,10.357,50.449,0.553c22.396-13.683,29.459-42.931,15.777-65.325C360.771,192.881,260.801,202.423,260.801,202.423z"/>
+          <path d="M426.744,126.001c-9.805-16.049-27.602-24.223-45.141-22.533c9.508-14.836,10.357-34.4,0.553-50.448c-13.684-22.396-42.93-29.46-65.326-15.778c-58.44,35.706-48.903,135.676-48.903,135.676s84.598,54.115,143.041,18.41C433.361,177.645,440.426,148.397,426.744,126.001z"/>
+          <path d="M117.62,264.748c-9.508,14.835-10.357,34.4-0.551,50.447c13.682,22.396,42.93,29.459,65.324,15.777c58.445-35.705,48.904-135.676,48.904-135.676s-84.596-54.115-143.041-18.408c-22.395,13.682-29.459,42.93-15.775,65.326C82.286,258.263,100.081,266.437,117.62,264.748z"/>
+          <path d="M216.699,316.855c-0.652,1.458-1.324,3.08-2.141,4.81c-0.85,1.716-1.701,3.586-2.77,5.514c-2.033,3.893-4.572,8.14-7.598,12.561c-3.018,4.425-6.537,9.018-10.539,13.598c-4,4.585-8.482,9.155-13.365,13.593c-4.879,4.438-10.156,8.74-15.711,12.836c-5.566,4.083-11.416,7.953-17.402,11.58c-11.975,7.257-24.551,13.476-36.604,18.621c-12.051,5.156-23.588,9.239-33.539,12.366c-9.957,3.128-18.332,5.291-24.117,6.646c-2.891,0.676-5.137,1.151-6.613,1.443c-0.709,0.131-1.254,0.232-1.619,0.299c-0.191,0.037-0.25,0.036-0.303,0.041c-0.051,0.003-0.15,0.024-0.137,0.021l14.199,47.176c0,0,0.287-0.111,0.842-0.329c0.475-0.201,1.182-0.5,2.104-0.888c1.773-0.77,4.283-1.895,7.404-3.366c6.24-2.947,14.922-7.3,25.004-13.005c10.078-5.706,21.563-12.766,33.34-21.082c11.775-8.303,23.848-17.866,35.027-28.396c5.592-5.263,10.967-10.746,15.982-16.385c5.006-5.648,9.652-11.443,13.828-17.263c4.18-5.82,7.881-11.665,11.053-17.375c3.176-5.705,5.814-11.273,7.957-16.503c2.145-5.229,3.809-10.114,5.027-14.499c0.66-2.174,1.123-4.257,1.604-6.149c0.449-1.906,0.777-3.676,1.113-5.255c0.561-3.192,0.969-5.687,1.154-7.404c0.215-1.707,0.328-2.617,0.328-2.617s-0.303,0.866-0.867,2.491C218.809,311.561,217.889,313.908,216.699,316.855z"/>
+        </g></g>
+      </svg>
       </div>
       <span class="createacc-logo-name">wisp</span>
     </div>
@@ -328,28 +357,29 @@ function initialisewispsignup(configSource) {
 
     <div class="createacc-field">
       <label class="createacc-label" for="createacc-username">Username</label>
-      <input type="text" id="createacc-username" placeholder="your_username" />
+      <input class="input" type="text" id="createacc-username" placeholder="your_username" />
     </div>
 
     <div class="createacc-field">
       <label class="createacc-label" for="createacc-email">Email</label>
-      <input type="email" id="createacc-email" placeholder="you@example.com" />
+      <input class="input" type="email" id="createacc-email" placeholder="you@example.com" />
     </div>
 
     <div class="createacc-field">
       <label class="createacc-label" for="createacc-password">Password</label>
-      <input type="password" id="createacc-password" placeholder="Create a password" />
+      <input class="input" type="password" id="createacc-password" placeholder="Create a password" />
     </div>
 
     <div class="createacc-field">
       <label class="createacc-label" for="createacc-confirm-password">Confirm password</label>
-      <input type="password" id="createacc-confirm-password" placeholder="Repeat your password" />
+      <input class="input" type="password" id="createacc-confirm-password" placeholder="Repeat your password" />
     </div>
 
+    <a href="login.html" style="font-size: 12px; color: var(--color-text-secondary); margin-bottom: 1.5rem; display: inline-block;">Already have an account? Sign in</a>
     <button type="button" class="createacc-btn" id="createacc-submit">Create account</button>
 
     <div class="createacc-footer">
-      Powered by <span><a href="https://wisp.dev" target="_blank">wisp</a></span>
+      Powered by <span><a href="https://wispproject.netlify.app" target="_blank">wisp</a></span>
     </div>
   </div>
 </div>`
